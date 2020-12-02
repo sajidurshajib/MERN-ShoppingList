@@ -1,11 +1,8 @@
 const express = require('express')
 const morgan = require('morgan')
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
-
-const  items = require('./routes/api/items')
-
+const config = require('config')
 
 // Database
 const deprecatedDB = {
@@ -14,7 +11,7 @@ const deprecatedDB = {
     useCreateIndex:true,
     useUnifiedTopology: true
 }
-mongoose.connect('mongodb://localhost/mearn_shopping',deprecatedDB)
+mongoose.connect(config.get('mongoURI'),deprecatedDB)
 
 const db = mongoose.connection
 
@@ -35,10 +32,11 @@ const app = express()
 app.use(morgan('dev'))
 app.use(cors())
 
-app.use(bodyParser.urlencoded({extended:false}))
-app.use(bodyParser.json())
+app.use(express.json())
 
-app.use('/api/items',items)
+app.use('/api/items',require('./routes/api/items'))
+app.use('/api/users',require('./routes/api/users'))
+app.use('/api/auth',require('./routes/api/auth'))
 
 
 // Main route
