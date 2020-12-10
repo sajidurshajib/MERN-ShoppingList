@@ -1,6 +1,9 @@
 # MERN-basic
 This repository cover all the basic mern-stack stuff. This repo can be a beginner frindly guide. 
 
+![ScreenSHot](screenshot.png)
+
+
 > Install all package first
 ```
     npm install 
