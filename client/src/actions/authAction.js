@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {returnError} from './errorAction'
+import {returnErrors} from './errorAction'
 import {
     USER_LOADED,
     USER_LOADING,
@@ -14,15 +14,14 @@ import {
 export const loadUser = ()=>(dispatch,getState)=>{
     dispatch({type: USER_LOADING})
 
-    
-
     axios.get('/api/auth/user', tokenConfig(getState))
         .then(res=>dispatch({
             type:USER_LOADED,
             payload: res.data
         }))
         .catch(err=>{
-            dispatch(returnError(err.response.data, err.response.status));
+            console.log('My error '+err)
+            dispatch(returnErrors(err.response.data, err.response.status, 'AUTH_ERROR'));
             dispatch({
                 type: AUTH_ERROR
             })
@@ -47,7 +46,7 @@ export const register =({name, email, password})=> dispatch=>{
             payload: res.data
         }))
         .catch(err=>{
-            dispatch(returnError(err.response.data,err.response.status, 'REGISTER_FAIL'))
+            dispatch(returnErrors(err.response.data,err.response.status, 'REGISTER_FAIL'))
             dispatch({
                 type: REGISTER_FAIL
             })
@@ -73,7 +72,7 @@ export const login =({email, password})=> dispatch=>{
             payload: res.data
         }))
         .catch(err=>{
-            dispatch(returnError(err.response.data,err.response.status, 'LOGIN_FAIL'))
+            dispatch(returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL'))
             dispatch({
                 type: LOGIN_FAIL
             })
@@ -96,13 +95,14 @@ export const tokenConfig = getState =>{
     const token = getState().auth.token
 
     const config = {
-        header:{
+        headers:{
             "Content-type":"application/json"
         }
     }
 
     if(token){
-        config.header['x-auth-token'] = token
+        config.headers['x-auth-token'] = token
     }
 
+    return config;
 }
